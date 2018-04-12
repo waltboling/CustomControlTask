@@ -62,6 +62,10 @@ class SideBar: UIView {
         }
     }
     
+    func getButtonTitles() -> String{
+        return buttonTitles
+    }
+    
     func updateView() {
         letters.removeAll()
         selector.removeAll()
@@ -70,11 +74,12 @@ class SideBar: UIView {
         let labelTitles = buttonTitles.components(separatedBy: ",")
         let screenSize = UIScreen.main.bounds
         let screenHeight = screenSize.height
+        let selectorHeight = self.frame.height / CGFloat(labelTitles.count)
         
         frame.size.height = screenHeight 
         frame.size.width = screenHeight / CGFloat(labelTitles.count)
         
-        
+        //create arrays based on user inputs
         for labelTitle in labelTitles {
             let button = UIButton(type: .system)
             button.setTitle(labelTitle, for: .normal)
@@ -82,38 +87,25 @@ class SideBar: UIView {
             button.titleLabel!.textAlignment = .right
             button.addTarget(self, action: #selector(buttonTapped(clickedLetter:)), for: .touchUpInside)
             button.backgroundColor = svBackgroundColor
-            //button.frame.size.width = frame.width
-            //button.frame.size.height = frame.width
+            button.frame.size.width = selectorHeight
+            button.frame.size.height = selectorHeight
             letters.append(button)
             
             let selectorHeight = self.frame.height / CGFloat(labelTitles.count)
-           
-            
             let selectorView = UIView(frame: CGRect(x:0, y:0, width: selectorHeight, height: selectorHeight))
-            selectorView.layer.cornerRadius = selectorHeight / 2
-           // selectorView.layer.cornerRadius = frame.height / 2
+            //selectorView.layer.cornerRadius = selectorHeight / 2
             selectorView.backgroundColor = svBackgroundColor
-           // selectorView.setTitle("TEST", for: .normal)
             selectorView.frame.size.width = selectorHeight
             selectorView.frame.size.height = selectorHeight
+
             selector.append(selectorView)
         }
         
+        //set selected index colors
         letters[selectedLetterIdx].setTitleColor(selectorTextColor, for: .normal)
         selector[selectedLetterIdx].backgroundColor = selectorColor
         
-       /* let selectorHeight = frame.height / CGFloat(labelTitles.count)
-        let selectorStartPosition = frame.height / CGFloat(letters.count) * CGFloat(selectedLetterIdx)
-        let selectorWidth = frame.width
-        selector = UIView(frame: CGRect(x: selectorWidth / 2 - selectorHeight / 2,
-                                        y: selectorStartPosition,
-                                        width: selectorHeight,
-                                        height: selectorHeight))
-        selector.layer.cornerRadius = selectorHeight / 2
-        selector.backgroundColor = selectorColor
-        addSubview(selector)
-         */
-        
+        //create selector Stack View
         let selectorStackView = UIStackView(arrangedSubviews: selector)
         selectorStackView.axis = .vertical
         selectorStackView.alignment = .fill
@@ -127,6 +119,7 @@ class SideBar: UIView {
         selectorStackView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         selectorStackView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         
+        //create letter Stack View
         let sv = UIStackView(arrangedSubviews: letters)
         sv.axis = .vertical
         sv.alignment = .fill
@@ -139,7 +132,6 @@ class SideBar: UIView {
         sv.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         sv.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         sv.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-      
     }
     
     @objc func buttonTapped(clickedLetter: UIButton) {
@@ -147,18 +139,10 @@ class SideBar: UIView {
             currentBtn.setTitleColor(textColor, for: .normal)
             selector[letterIndex].backgroundColor = svBackgroundColor
             if currentBtn == clickedLetter {
-               /* let selectorStartPosition = frame.height / CGFloat(letters.count) * CGFloat(letterIndex)
-                let selectorStartPositionX = frame.width / 2 - selector.frame.width / 2
-                UIView.animate(withDuration: 0.3, animations: {
-                    self.selector.frame.origin.y = selectorStartPosition
-                    self.selector.frame.origin.x = selectorStartPositionX
-                })*/
                 selectedLetterIdx = letterIndex
                 currentBtn.setTitleColor(selectorTextColor, for: .normal)
                 selector[letterIndex].backgroundColor = selectorColor
             }
         }
     }
-    
-    
 }
